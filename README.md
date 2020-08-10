@@ -102,14 +102,15 @@ print(result[0:6])
 
 python code
 ```python
+# 計算 CERs
 import nltk
-def calculate_WER(s1, s2):
+def calculate_CER(s1, s2):
     # 先去除標點符號
     s1 = re.sub("[，,。、「」；《》\n 『』（）、〈〉()？!！?\[\]]", "", s1)
     s2 = re.sub("[，,。、「」；《》\n 『』（）、〈〉()？!！?\[\]]", "", s2)
     S_D_I = nltk.edit_distance(s1, s2)
-    WER = S_D_I / max(len(s1), len(s2))
-    return WER
+    CER = S_D_I / max(len(s1), len(s2))
+    return CER
 ```
 
 檢視語音辨識的辨識率
@@ -117,20 +118,19 @@ def calculate_WER(s1, s2):
 import pandas as pd
 import numpy as np
 import re
-
 # 讀取labeled text data
 dataset = pd.read_excel('../../../文本總整理Beta 2.xlsx', index_col=0)
 
-WERs = []
-for s1, s2 in zip(result_temp, dataset['文章']):
-    WER = calculate_WER(s1, s2)
-    WERs.append(WER)
-print("mean", sum(WERs)/len(WERs))
-print("std.", np.std(WERs))
+CERs = []
+for s1, s2 in zip(result, dataset['文章']):
+    CER = calculate_CER(s1, s2)
+    CERs.append(CER)
+print("mean error rate", sum(CERs)/len(CERs))
+print("error rate std.", np.std(CERs))
 ```
-```sh=bash
-mean 0.16618959589217042
-std. 0.15332470055160605
+```
+mean error rate 0.16618959589217042
+error rate std. 0.15332470055160605
 ```
 
 ## 分句進行語音解析

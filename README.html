@@ -130,29 +130,29 @@ print(result[<span class="hljs-number">0</span>:<span class="hljs-number">6</spa
 </div></div></code></pre><p><strong><span>檢視語音辨識結果</span></strong><br>
 <span>可以透過字錯計算來檢驗語音辨識結果，計算公式如下圖(</span><em><span>資料來源: </span><a href="https://www.itread01.com/content/1554303541.html" target="_blank" rel="noopener"><span>https://www.itread01.com/content/1554303541.html</span></a></em><span>)</span><br>
 <img src="https://i.imgur.com/XVxGK4s.png" alt=""><br>
-<img src="https://i.imgur.com/FOK1kLv.png" alt=""></p><p><span>python code</span></p><pre><code class="python hljs"><span class="hljs-keyword">import</span> nltk
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">calculate_WER</span><span class="hljs-params">(s1, s2)</span>:</span>
+<img src="https://i.imgur.com/FOK1kLv.png" alt=""></p><p><span>python code</span></p><pre><code class="python hljs"><span class="hljs-comment"># 計算 CERs</span>
+<span class="hljs-keyword">import</span> nltk
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">calculate_CER</span><span class="hljs-params">(s1, s2)</span>:</span>
     <span class="hljs-comment"># 先去除標點符號</span>
     s1 = re.sub(<span class="hljs-string">"[，,。、「」；《》\n 『』（）、〈〉()？!！?\[\]]"</span>, <span class="hljs-string">""</span>, s1)
     s2 = re.sub(<span class="hljs-string">"[，,。、「」；《》\n 『』（）、〈〉()？!！?\[\]]"</span>, <span class="hljs-string">""</span>, s2)
     S_D_I = nltk.edit_distance(s1, s2)
-    WER = S_D_I / max(len(s1), len(s2))
-    <span class="hljs-keyword">return</span> WER
+    CER = S_D_I / max(len(s1), len(s2))
+    <span class="hljs-keyword">return</span> CER
 </code></pre><p><span>檢視語音辨識的辨識率</span></p><pre><code class="python hljs"><span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
 <span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
 <span class="hljs-keyword">import</span> re
-
 <span class="hljs-comment"># 讀取labeled text data</span>
 dataset = pd.read_excel(<span class="hljs-string">'../../../文本總整理Beta 2.xlsx'</span>, index_col=<span class="hljs-number">0</span>)
 
-WERs = []
-<span class="hljs-keyword">for</span> s1, s2 <span class="hljs-keyword">in</span> zip(result_temp, dataset[<span class="hljs-string">'文章'</span>]):
-    WER = calculate_WER(s1, s2)
-    WERs.append(WER)
-print(<span class="hljs-string">"mean"</span>, sum(WERs)/len(WERs))
-print(<span class="hljs-string">"std."</span>, np.std(WERs))
-</code></pre><pre><code class="sh=bash hljs"><span class="hljs-selector-tag">mean</span> 0<span class="hljs-selector-class">.16618959589217042</span>
-<span class="hljs-selector-tag">std</span>. 0<span class="hljs-selector-class">.15332470055160605</span>
+CERs = []
+<span class="hljs-keyword">for</span> s1, s2 <span class="hljs-keyword">in</span> zip(result, dataset[<span class="hljs-string">'文章'</span>]):
+    CER = calculate_CER(s1, s2)
+    CERs.append(CER)
+print(<span class="hljs-string">"mean error rate"</span>, sum(CERs)/len(CERs))
+print(<span class="hljs-string">"error rate std."</span>, np.std(CERs))
+</code></pre><pre><code>mean error rate 0.16618959589217042
+error rate std. 0.15332470055160605
 </code></pre><h2 id="分句進行語音解析" data-id="分句進行語音解析" style=""><a class="anchor hidden-xs" href="#分句進行語音解析" title="分句進行語音解析"><span class="octicon octicon-link"></span></a><span>分句進行語音解析</span></h2><pre><code class="python hljs"><span class="hljs-keyword">import</span> pydub
 <span class="hljs-keyword">from</span> pydub <span class="hljs-keyword">import</span> AudioSegment
 <span class="hljs-keyword">from</span> pydub.playback <span class="hljs-keyword">import</span> play
@@ -272,10 +272,10 @@ audio_list
             </a>
             <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
                 <div class="toc"><ul class="nav">
-<li class=""><a href="#語音辨識實作" title="語音辨識實作">語音辨識實作</a></li>
-<li><a href="#情境---辨識客服對話" title="情境 - 辨識客服對話">情境 - 辨識客服對話</a><ul class="nav">
+<li><a href="#語音辨識實作" title="語音辨識實作">語音辨識實作</a></li>
+<li class=""><a href="#情境---辨識客服對話" title="情境 - 辨識客服對話">情境 - 辨識客服對話</a><ul class="nav">
 <li><a href="#資料集" title="資料集">資料集</a></li>
-<li><a href="#語音檔案轉文字" title="語音檔案轉文字">語音檔案轉文字</a></li>
+<li class=""><a href="#語音檔案轉文字" title="語音檔案轉文字">語音檔案轉文字</a></li>
 <li><a href="#分句進行語音解析" title="分句進行語音解析">分句進行語音解析</a></li>
 <li><a href="#辨識說話者" title="辨識說話者">辨識說話者</a></li>
 <li><a href="#結論" title="結論">結論</a></li>
@@ -288,10 +288,10 @@ audio_list
     </div>
     <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
         <div class="toc"><ul class="nav">
-<li class=""><a href="#語音辨識實作" title="語音辨識實作">語音辨識實作</a></li>
-<li><a href="#情境---辨識客服對話" title="情境 - 辨識客服對話">情境 - 辨識客服對話</a><ul class="nav">
+<li><a href="#語音辨識實作" title="語音辨識實作">語音辨識實作</a></li>
+<li class=""><a href="#情境---辨識客服對話" title="情境 - 辨識客服對話">情境 - 辨識客服對話</a><ul class="nav">
 <li><a href="#資料集" title="資料集">資料集</a></li>
-<li><a href="#語音檔案轉文字" title="語音檔案轉文字">語音檔案轉文字</a></li>
+<li class=""><a href="#語音檔案轉文字" title="語音檔案轉文字">語音檔案轉文字</a></li>
 <li><a href="#分句進行語音解析" title="分句進行語音解析">分句進行語音解析</a></li>
 <li><a href="#辨識說話者" title="辨識說話者">辨識說話者</a></li>
 <li><a href="#結論" title="結論">結論</a></li>
